@@ -82,7 +82,7 @@ args = {
 }
 
 with DAG(
-        dag_id='reset_data_and_upload_historical_data',
+        dag_id='reset_and_upload_historical_data',
         default_args=args,
         description='Deleting all data and loading historical data in staging and mart',
         catchup=True,
@@ -109,7 +109,7 @@ with DAG(
 
     task_upload_historical_data_to_staging = PythonOperator(
         task_id='upload_historical_data_to_staging',
-        python_callable=upload_historical_data,
+        python_callable=upload_historical_data_to_staging,
         op_kwargs={'filename': 'user_orders_log.csv',
                    'pg_table': 'user_order_log',
                    'pg_schema': 'staging'})

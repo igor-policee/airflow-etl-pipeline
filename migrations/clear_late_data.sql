@@ -1,4 +1,9 @@
--- Удаление поздних данных из таблиц "mart.d_city", "mart.d_customer", "mart.d_item", "de.mart.f_sales"
+-- Удаление поздних данных из таблиц "de.mart.f_sales", "mart.d_city", "mart.d_customer", "mart.d_item"
+delete from
+    de.mart.f_sales
+where
+    de.mart.f_sales.created_date = '{{ ds }}'::date;
+
 delete from
     de.mart.d_city
 where
@@ -14,11 +19,6 @@ delete from
 where
     de.mart.d_item.created_date = '{{ ds }}'::date;
     
-delete from
-    de.mart.f_sales
-where
-    de.mart.f_sales.created_date = '{{ ds }}'::date;
-
 -- Удаление поздних данных из таблицы "staging.user_order_log"
 delete from
     staging.user_order_log
