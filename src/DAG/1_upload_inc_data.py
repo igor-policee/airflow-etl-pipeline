@@ -115,11 +115,6 @@ with DAG(dag_id='upload_increment_data',
          start_date=datetime.now() - timedelta(days=8),
          end_date=datetime.now() - timedelta(days=1)) as dag:
 
-    task_clear_late_data = PostgresOperator(
-        task_id='clear_late_data',
-        postgres_conn_id=postgres_conn_id,
-        sql='migrations/clear_late_data.sql')
-
     task_generate_report = PythonOperator(
         task_id='generate_report',
         python_callable=generate_report)
@@ -132,6 +127,11 @@ with DAG(dag_id='upload_increment_data',
         task_id='get_increment',
         python_callable=get_increment,
         op_kwargs={'date': business_dt})
+    
+    task_clear_late_data = PostgresOperator(
+        task_id='clear_late_data',
+        postgres_conn_id=postgres_conn_id,
+        sql='migrations/clear_late_data.sql')    
 
     task_upload_increment_data_to_staging = PythonOperator(
         task_id='upload_increment_data_to_staging',
@@ -147,8 +147,9 @@ with DAG(dag_id='upload_increment_data',
         sql="migrations/upload_increment_mart.sql")
     
     
-    [task_clear_late_data, task_generate_report] \
+    task_generate_report \
     >> task_get_report \
     >> task_get_increment \
+    >> task_clear_late_data \
     >> task_upload_increment_data_to_staging \
     >> task_upload_increment_data_to_mart

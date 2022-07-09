@@ -1,4 +1,5 @@
--- Удаление поздних данных из таблиц "de.mart.f_sales", "mart.d_city", "mart.d_customer", "mart.d_item"
+-- Удаление данных за текущий день (логическая дата задачи) из таблиц
+-- "de.mart.f_sales", "mart.d_city", "mart.d_customer", "mart.d_item"
 delete from
     de.mart.f_sales
 where
@@ -19,9 +20,8 @@ delete from
 where
     de.mart.d_item.created_date = '{{ ds }}'::date;
     
--- Удаление поздних данных из таблицы "staging.user_order_log"
+-- Удаление данных за текущий день (логическая дата задачи) из таблицы "staging.user_order_log"
 delete from
     staging.user_order_log
 where
-    staging.user_order_log.date_time::date > '2022-06-30'::date
-    and staging.user_order_log.date_time::date = '{{ ds }}'::date;
+    staging.user_order_log.date_time::date = '{{ ds }}'::date;
