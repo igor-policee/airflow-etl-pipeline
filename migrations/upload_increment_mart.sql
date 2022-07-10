@@ -1,11 +1,10 @@
 -- Заполнение таблицы: "mart.d_item" <- "staging.user_order_log"
 insert into
     mart.d_item
-    (item_id, item_name, created_date)
+    (item_id, item_name)
 select
     item_id,
-    item_name,
-    min(date_time)::date
+    item_name
 from
     staging.user_order_log
 where
@@ -23,13 +22,12 @@ group by
 -- Заполнение таблицы: "mart.d_customer" <- "staging.user_order_log"
 insert into
     mart.d_customer
-    (customer_id, first_name, last_name, city_id, created_date)
+    (customer_id, first_name, last_name, city_id)
 select
     customer_id,
     first_name,
     last_name,
-    max(city_id),
-    min(date_time)::date
+    max(city_id)
 from
     staging.user_order_log
 where
@@ -48,11 +46,10 @@ group by
 -- Заполнение таблицы: "mart.d_city" <- "staging.user_order_log"
 insert into
     mart.d_city
-    (city_id, city_name, created_date)
+    (city_id, city_name)
 select
     city_id,
-    city_name,
-    min(date_time)::date
+    city_name
 from
     staging.user_order_log
 where
@@ -70,7 +67,7 @@ group by
 -- Заполнение таблицы: "mart.f_sales" <- "staging.user_order_log"
 insert into
     mart.f_sales
-    (date_id, item_id, customer_id, city_id, quantity, payment_amount, status, created_date)
+    (date_id, item_id, customer_id, city_id, quantity, payment_amount, status)
 select
     dc.date_id,
     item_id,
@@ -78,8 +75,7 @@ select
     city_id,
     quantity,
     payment_amount,
-    status,
-    date_time::date
+    status
 from
     staging.user_order_log uol
     left join mart.d_calendar as dc

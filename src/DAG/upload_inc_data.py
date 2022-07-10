@@ -110,7 +110,7 @@ args = {
 
 business_dt = '{{ ds }}'
 
-with DAG(dag_id='upload_increment_data_test_v1',
+with DAG(dag_id='upload_increment_data',
          default_args=args,
          description='Loading data increments for the current date',
          catchup=True,
