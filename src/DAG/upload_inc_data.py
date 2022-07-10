@@ -75,9 +75,7 @@ def get_increment(date, ti):
     
 
 def upload_increment_data_to_staging(filename, date, pg_table, pg_schema, ti):
-    increment_id = ti.xcom_pull(key='increment_id')
-
-    if increment_id:
+    if increment_id := ti.xcom_pull(key='increment_id'):
         s3_filename = f'https://storage.yandexcloud.net/s3-sprint3/cohort_{cohort}/{nickname}/project/{increment_id}/{filename}'
 
         local_filename = date.replace('-', '') + '_' + filename
@@ -125,8 +123,7 @@ with DAG(dag_id='upload_increment_data',
     task_create_mart_view = PostgresOperator(
         task_id='create_mart_view',
         postgres_conn_id=postgres_conn_id,
-        sql="migrations/create_f_customer_retention.sql"
-        )
+        sql="migrations/create_f_customer_retention.sql")
 
     task_generate_report = PythonOperator(
         task_id='generate_report',
