@@ -10,8 +10,8 @@ alter table
 add column if not exists
     "status" varchar(10);
 
--- Создание технических колонок "created_date" в таблицах "mart.d_city", "mart.d_customer",
--- "mart.d_item", "de.mart.f_sales" для организации идемпотентности
+-- Создание технических колонок "created_date" для организации идемпотентности в таблицах
+-- "mart.d_city", "mart.d_customer", "mart.d_item", "de.mart.f_sales"
 alter table
     de.mart.d_city
 add column if not exists

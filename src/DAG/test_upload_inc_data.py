@@ -110,7 +110,7 @@ args = {
 
 business_dt = '{{ ds }}'
 
-with DAG(dag_id='upload_increment_data',
+with DAG(dag_id='upload_increment_data_test_v1',
          default_args=args,
          description='Loading data increments for the current date',
          catchup=True,
@@ -148,10 +148,10 @@ with DAG(dag_id='upload_increment_data',
                    'pg_table': 'user_order_log',
                    'pg_schema': 'staging'})
     
-    # task_upload_increment_data_to_mart = PostgresOperator(
-    #     task_id='upload_increment_data_to_mart',
-    #     postgres_conn_id=postgres_conn_id,
-    #     sql="migrations/upload_increment_mart.sql")
+    task_upload_increment_data_to_mart = PostgresOperator(
+        task_id='upload_increment_data_to_mart',
+        postgres_conn_id=postgres_conn_id,
+        sql="migrations/upload_increment_mart.sql")
 
 
     task_add_column \
@@ -159,6 +159,5 @@ with DAG(dag_id='upload_increment_data',
     >> task_get_report \
     >> task_get_increment \
     >> task_clear_late_data \
-    >> task_upload_increment_data_to_staging
-    
-    # >> task_upload_increment_data_to_mart
+    >> task_upload_increment_data_to_staging \
+    >> task_upload_increment_data_to_mart

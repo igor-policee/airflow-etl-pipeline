@@ -102,5 +102,4 @@ set
     payment_amount = -1 * payment_amount
 where
     status = 'refunded'
-    and payment_amount > 0
-;
+    and payment_amount > 0;

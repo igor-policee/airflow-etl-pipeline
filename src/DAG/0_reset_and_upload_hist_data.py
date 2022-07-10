@@ -92,12 +92,12 @@ with DAG(
     task_reset_data = PostgresOperator(
         task_id='reset_data',
         postgres_conn_id=postgres_conn_id,
-        sql="migrations/reset_data.sql")
+        sql="migrations/_todelete_reset_data.sql")
 
     task_drop_constraint = PostgresOperator(
         task_id='drop_constraint',
         postgres_conn_id=postgres_conn_id,
-        sql="migrations/drop_constraint.sql")
+        sql="migrations/_todelete_drop_constraint.sql")
 
     task_generate_report = PythonOperator(
         task_id='generate_report',
@@ -122,7 +122,7 @@ with DAG(
     task_upload_historical_data_to_mart = PostgresOperator(
         task_id='upload_historical_data_to_mart',
         postgres_conn_id=postgres_conn_id,
-        sql="migrations/upload_historical_mart.sql")
+        sql="migrations/_todelete_upload_historical_mart.sql")
 
 
     [task_reset_data, task_drop_constraint] \
