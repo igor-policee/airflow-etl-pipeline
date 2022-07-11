@@ -3,7 +3,8 @@ create or replace view de.mart.f_customer_retention as
 
 with sales_per_week_cte as
 (
-    select id,
+    select 
+        id,
         fs.date_id,
         item_id,
         customer_id,
