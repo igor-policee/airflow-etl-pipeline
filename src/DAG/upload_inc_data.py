@@ -119,11 +119,6 @@ with DAG(dag_id='upload_increment_data',
         task_id='add_column',
         postgres_conn_id=postgres_conn_id,
         sql="migrations/add_column.sql")
-    
-    task_create_mart_view = PostgresOperator(
-        task_id='create_mart_view',
-        postgres_conn_id=postgres_conn_id,
-        sql="migrations/create_f_customer_retention.sql")
 
     task_generate_report = PythonOperator(
         task_id='generate_report',
@@ -156,12 +151,17 @@ with DAG(dag_id='upload_increment_data',
         postgres_conn_id=postgres_conn_id,
         sql="migrations/upload_increment_mart.sql")
 
+    task_create_view = PostgresOperator(
+        task_id='create_mart_view',
+        postgres_conn_id=postgres_conn_id,
+        sql="migrations/create_f_customer_retention.sql")
+
 
     task_add_column \
-    >> task_create_mart_view \
     >> task_generate_report \
     >> task_get_report \
     >> task_get_increment \
     >> task_clear_late_data \
     >> task_upload_increment_data_to_staging \
-    >> task_upload_increment_data_to_mart
+    >> task_upload_increment_data_to_mart \
+    >> task_create_view
