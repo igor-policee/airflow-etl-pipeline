@@ -1,6 +1,21 @@
--- Создание представления "mart.f_customer_retention"
-create or replace view de.mart.f_customer_retention as
+-- Создание витрины
+drop table if exists
+    mart.f_customer_retention cascade;
 
+create table
+    mart.f_customer_retention
+(
+    week_of_year integer,
+    new_customers_count integer,
+    returning_customers_count integer,
+    refunded_customer_count integer,
+    purchase_refunds_count integer,
+    new_customers_revenue numeric(14, 2),
+    returning_customers_revenue numeric(14, 2)
+);
+
+insert into
+    mart.f_customer_retention
 with sales_per_week_cte as
 (
     select
@@ -130,7 +145,7 @@ returning_customers_revenue_cte as
         week_of_year
 )
 
--- Сборка представления
+-- Сборка витрины
 select
     week_of_year,
     new_customers_count,

@@ -8,6 +8,7 @@ from airflow.providers.http.hooks.http import HttpHook
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 
 http_conn_id = HttpHook.get_connection('http_conn_id')
 api_key = http_conn_id.extra_dejson.get('api_key')
@@ -151,17 +152,16 @@ with DAG(dag_id='upload_increment_data',
         postgres_conn_id=postgres_conn_id,
         sql="migrations/upload_increment_mart.sql")
 
-    task_create_view = PostgresOperator(
-        task_id='create_view',
+    task_create_datamart = PostgresOperator(
+        task_id='create_datamart',
         postgres_conn_id=postgres_conn_id,
-        sql="migrations/create_f_customer_retention.sql")
+        sql="migrations/f_customer_retention.sql")
 
 
-    task_add_column \
-    >> task_generate_report \
+    [task_add_column, task_generate_report] \
     >> task_get_report \
     >> task_get_increment \
     >> task_clear_late_data \
     >> task_upload_increment_data_to_staging \
     >> task_upload_increment_data_to_mart \
-    >> task_create_view
+    >> task_create_datamart 
