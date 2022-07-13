@@ -152,7 +152,7 @@ with DAG(dag_id='upload_increment_data',
         sql="migrations/upload_increment_mart.sql")
 
     task_create_view = PostgresOperator(
-        task_id='create_mart_view',
+        task_id='create_view',
         postgres_conn_id=postgres_conn_id,
         sql="migrations/create_f_customer_retention.sql")
 

@@ -3,7 +3,7 @@ create or replace view de.mart.f_customer_retention as
 
 with sales_per_week_cte as
 (
-    select 
+    select
         id,
         fs.date_id,
         item_id,
@@ -12,6 +12,7 @@ with sales_per_week_cte as
         quantity,
         payment_amount,
         status,
+        date_actual,
         week_of_year
 from
     mart.f_sales as fs
@@ -19,139 +20,129 @@ from
         on fs.date_id = dc.date_id
 ),
 
-shipped_per_week_cte as
+purchases_cte as
 (
     select
         customer_id,
+        date_actual,
         week_of_year,
-        sum(payment_amount) as payment_amount_sum,
-        count(customer_id) as purchase_count
+        status,
+        payment_amount,
+        row_number()  over (partition by customer_id, week_of_year order by date_actual::date asc) as "purchase_number"
     from
-        sales_per_week_cte
-    where
-        status = 'shipped'
-    group by
-        customer_id,
-        week_of_year
+    (
+        select
+            customer_id,
+            date_actual,
+            week_of_year,
+            status,
+            payment_amount
+        from
+            sales_per_week_cte
+        where
+            status = 'shipped'
+    ) as st0
 ),
 
+-- Кол-во новых клиентов
 new_customers_count_cte as
 (
     select
         week_of_year,
         count(customer_id) as "new_customers_count"
     from
-        shipped_per_week_cte
+        purchases_cte
     where
-        purchase_count = 1
+        purchase_number = 1
     group by
         week_of_year
 ),
 
+-- Кол-во вернувшихся клиентов
 returning_customers_count_cte as
 (
     select
         week_of_year,
-        count(customer_id) as "returning_customers_count"
+        count(distinct customer_id) as "returning_customers_count"
     from
-        shipped_per_week_cte
+        purchases_cte
     where
-        purchase_count > 1
+        purchase_number > 1
     group by
         week_of_year
 ),
 
-refunds_cte as
+-- Кол-во уникальных клиентов, оформивших возврат
+refunded_customer_count_cte as
 (
     select
-        customer_id,
         week_of_year,
-        count(customer_id) as "refunds_count"
+        count(distinct customer_id) as "refunded_customer_count"
     from
         sales_per_week_cte
     where
         status = 'refunded'
     group by
-        customer_id,
         week_of_year
 ),
 
-refunded_customer_count_cte as
+-- Кол-во возвратов клиентов
+purchase_refunds_count_cte as
 (
     select
         week_of_year,
-        count(customer_id) as "refunded_customer_count"
-    from
-        refunds_cte
-    group by
-        week_of_year
-),
-
-item_id_cte as
-(
-    select
-        week_of_year,
-        array_agg(item_id) as "item_id"
+        count(customer_id) as "purchase_refunds_count"
     from
         sales_per_week_cte
+    where
+        status = 'refunded'
     group by
         week_of_year
 ),
 
+-- Доход от новых клиентов
 new_customers_revenue_cte as
 (
     select
         week_of_year,
-        sum(payment_amount_sum) as "new_customers_revenue"
+        sum(payment_amount) as "new_customers_revenue"
     from
-        shipped_per_week_cte
+        purchases_cte
     where
-        purchase_count = 1
+        status = 'shipped'
+        and purchase_number = 1
     group by
         week_of_year
 ),
 
+-- Доход от вернувшихся клиентов
 returning_customers_revenue_cte as
 (
     select
         week_of_year,
-        sum(payment_amount_sum) as "returning_customers_revenue"
+        sum(payment_amount) as "returning_customers_revenue"
     from
-        shipped_per_week_cte
+        purchases_cte
     where
-        purchase_count > 1
-    group by
-        week_of_year
-),
-
-customers_refunded_cte as
-(
-    select
-        week_of_year,
-        sum(refunds_count) as "customers_refunded"
-    from
-        refunds_cte
+        status = 'shipped'
+        and purchase_number > 1
     group by
         week_of_year
 )
 
---
-
+-- Сборка представления
 select
-    week_of_year as "period_id",
-    'weekly' as "period_name",
+    week_of_year,
     new_customers_count,
     returning_customers_count,
     refunded_customer_count,
-    item_id,
+    purchase_refunds_count,
     new_customers_revenue,
-    returning_customers_revenue,
-    customers_refunded
+    returning_customers_revenue
 from
     new_customers_count_cte
     left join returning_customers_count_cte using (week_of_year)
     left join refunded_customer_count_cte using (week_of_year)
-    left join item_id_cte using (week_of_year)
+    left join purchase_refunds_count_cte using (week_of_year)
     left join new_customers_revenue_cte using (week_of_year)
-    left join returning_customers_revenue_cte using (week_of_year)
-    left join customers_refunded_cte using (week_of_year);
+    left join returning_customers_revenue_cte using (week_of_year);
