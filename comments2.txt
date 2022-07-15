@@ -1,0 +1,17 @@
+- Можно ли добавить логи в SQL?
+
+- [2022-07-15 17:37:24] [58P01] ERROR: could not open file "https://storage.yandexcloud.net/s3-sprint3/cohort_3/igor_polishchuk/project/MjAyMi0wNy0wOFQwMDowMDowMAlUV3BCZVUxcE1IZE9lVEI0VGxaUmVFNUViM2hPUkc5M1RWRnNjRm95T1hsWU0wSjJZa2RzZW1GSFRtOWtWM005/user_orders_log_inc.csv" for reading: No such file or directory
+[2022-07-15 17:37:24] Hint: COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+
+- Если поле "status" отсутствует в исходном csv, то не получается с помощью copy загрузить этот файл.
+
+
+fcol=$(head -n 1 '/lessons/2022-07-15_outfile.csv' | cut -d, -f 12);
+tcol='status';
+
+if [[ "$fcol" == "$tcol" ]];
+then psql "dbname=de host=localhost user=jovyan password=jovyan port=5432 sslmode=require";
+\copy staging.user_order_log_raw_with_status from '/lessons/2022-07-15_outfile.csv' with csv header;
+else psql "dbname=de host=localhost user=jovyan password=jovyan port=5432 sslmode=require";
+\copy staging.user_order_log_raw from '/lessons/2022-07-15_outfile.csv' with csv header;
+fi
