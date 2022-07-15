@@ -4,14 +4,3 @@
 [2022-07-15 17:37:24] Hint: COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
 
 - Если поле "status" отсутствует в исходном csv, то не получается с помощью copy загрузить этот файл.
-
-
-fcol=$(head -n 1 '/lessons/2022-07-15_outfile.csv' | cut -d, -f 12);
-tcol='status';
-
-if [[ "$fcol" == "$tcol" ]];
-then psql "dbname=de host=localhost user=jovyan password=jovyan port=5432 sslmode=require";
-\copy staging.user_order_log_raw_with_status from '/lessons/2022-07-15_outfile.csv' with csv header;
-else psql "dbname=de host=localhost user=jovyan password=jovyan port=5432 sslmode=require";
-\copy staging.user_order_log_raw from '/lessons/2022-07-15_outfile.csv' with csv header;
-fi
