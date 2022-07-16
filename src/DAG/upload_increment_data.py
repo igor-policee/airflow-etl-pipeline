@@ -171,7 +171,7 @@ with DAG(dag_id='upload_increment_data',
         task_id='remove_data_file',
         bash_command='rm -f {{ ti.xcom_pull(key="local_filename") }}')
 
-    task_move_increment_to_staging = BashOperator(
+    task_move_increment_to_staging = PostgresOperator(
         task_id='move_increment_to_staging',
         postgres_conn_id=postgres_conn_id,
         sql='migrations/move_increment_to_staging.sql')
@@ -196,4 +196,5 @@ with DAG(dag_id='upload_increment_data',
     >> task_upload_raw_increment \
     >> task_remove_data_file \
     >> task_move_increment_to_staging \
-    >> task_upload_increment_to_mart
+    >> task_upload_increment_to_mart \
+    >> task_create_datamart
