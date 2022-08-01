@@ -1,4 +1,4 @@
--- Перемещение данных из raw staging в staging
+-- Moving data from raw staging to staging
 insert into
     staging.user_order_log
     (date_time, city_id, city_name, customer_id, first_name,
