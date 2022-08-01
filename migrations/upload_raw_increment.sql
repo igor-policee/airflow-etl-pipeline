@@ -1,4 +1,4 @@
--- Загрузка данных в таблицы "staging.user_order_log_raw_with_status", "staging.user_order_log_raw"
+-- Loading data into the tables "staging.user_order_log_raw_with_status", "staging.user_order_log_raw"
 copy
     {{ ti.xcom_pull(key="target_table") }}
 from
