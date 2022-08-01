@@ -1,4 +1,4 @@
--- Заполнение таблицы: "mart.d_item" <- "staging.user_order_log"
+-- Filling in the table: "mart.d_item" <- "staging.user_order_log"
 insert into
     mart.d_item
     (item_id, item_name)
@@ -19,7 +19,7 @@ group by
     item_id,
     item_name;
 
--- Заполнение таблицы: "mart.d_customer" <- "staging.user_order_log"
+-- Filling in the table: "mart.d_customer" <- "staging.user_order_log"
 insert into
     mart.d_customer
     (customer_id, first_name, last_name, city_id)
@@ -43,7 +43,7 @@ group by
     first_name,
     last_name;
 
--- Заполнение таблицы: "mart.d_city" <- "staging.user_order_log"
+-- Filling in the table: "mart.d_city" <- "staging.user_order_log"
 insert into
     mart.d_city
     (city_id, city_name)
@@ -64,7 +64,7 @@ group by
     city_id,
     city_name;
 
--- Заполнение таблицы: "mart.f_sales" <- "staging.user_order_log"
+-- Filling in the table: "mart.f_sales" <- "staging.user_order_log"
 insert into
     mart.f_sales
     (date_id, item_id, customer_id, city_id, quantity, payment_amount, status)
@@ -83,7 +83,7 @@ from
 where
     uol.date_time::date = '{{ ds }}';
     
--- Замена значений NULL -> 'shipped' в таблице "de.mart.f_sales"
+-- Replacing NULL -> 'shipped' values in the "de.mart.f_sales" table
 update
     de.mart.f_sales
 set
@@ -91,7 +91,7 @@ set
 where
     status is null;
 
--- Пересчет колонки "payment_amount" в таблице "de.mart.f_sales" с учетом статусов
+-- Recalculation of the "payment_amount" column in the "de.mart.f_sales" table, taking into account the statuses
 update
     de.mart.f_sales
 set
