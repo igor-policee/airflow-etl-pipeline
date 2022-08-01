@@ -1,4 +1,4 @@
--- Создание таблицы "staging.user_order_log_raw" для загрузки данных из файла "user_orders_log_inc.csv" (s3)
+-- Creating a tables to load data from the file "user_orders_log_inc.csv" (s3)
 create table if not exists
     staging.user_order_log_raw
 (
