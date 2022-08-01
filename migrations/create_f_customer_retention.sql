@@ -1,4 +1,4 @@
--- Создание витрины
+-- Create datamart
 drop table if exists
     mart.f_customer_retention cascade;
 
@@ -59,7 +59,7 @@ purchases_cte as
     ) as st0
 ),
 
--- Кол-во новых клиентов
+-- Number of new customers
 new_customers_count_cte as
 (
     select
@@ -73,7 +73,7 @@ new_customers_count_cte as
         week_of_year
 ),
 
--- Кол-во вернувшихся клиентов
+-- Number of returning customers
 returning_customers_count_cte as
 (
     select
@@ -87,7 +87,7 @@ returning_customers_count_cte as
         week_of_year
 ),
 
--- Кол-во уникальных клиентов, оформивших возврат
+-- Number of unique customers who have issued a refund
 refunded_customer_count_cte as
 (
     select
@@ -101,7 +101,7 @@ refunded_customer_count_cte as
         week_of_year
 ),
 
--- Кол-во возвратов клиентов
+-- Number of customer refunds
 purchase_refunds_count_cte as
 (
     select
@@ -115,7 +115,7 @@ purchase_refunds_count_cte as
         week_of_year
 ),
 
--- Доход от новых клиентов
+-- Revenue from new customers
 new_customers_revenue_cte as
 (
     select
@@ -130,7 +130,7 @@ new_customers_revenue_cte as
         week_of_year
 ),
 
--- Доход от вернувшихся клиентов
+-- Revenue from returning customers
 returning_customers_revenue_cte as
 (
     select
@@ -145,7 +145,7 @@ returning_customers_revenue_cte as
         week_of_year
 )
 
--- Сборка витрины
+-- Assembling datamart
 select
     week_of_year,
     new_customers_count,
