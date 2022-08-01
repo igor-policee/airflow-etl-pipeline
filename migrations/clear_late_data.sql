@@ -1,4 +1,4 @@
--- Удаление данных за текущий день (логическая дата задачи) из таблицы "de.mart.f_sales"
+-- Deleting data for the current day (logical date of the task) from the table "de.mart.f_sales"
 delete from
     mart.f_sales
 where 
@@ -14,13 +14,13 @@ where
         date_actual::date = '{{ ds }}'::date
 );
 
--- Удаление данных за текущий день (логическая дата задачи) из таблицы "staging.user_order_log"
+-- Deleting data for the current day (logical date of the task) from the table "staging.user_order_log"
 delete from
     staging.user_order_log
 where
     date_time::date = '{{ ds }}'::date;
     
--- Удаление данных за текущий день (логическая дата задачи) из таблиц "staging.user_order_log_raw" и "staging.user_order_log_raw_with_status"
+-- Deleting data for the current day (logical date of the task) from the tables "staging.user_order_log_raw", "staging.user_order_log_raw_with_status"
 delete from
     staging.user_order_log_raw
 where
